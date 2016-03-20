@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html ng-app="phoneBookApp">
+	<head>
+		<meta charset="ISO-8859-1">
+		<title>Phone Book Search</title>		
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
+		<style>
+			h1 {color:SteelBlue;font-family:verdana;font-size:19px;font-weight:bold;margin-top:40px;margin-bottom:5px;margin-left:40px;}
+			h3 {color:SteelBlue;font-family:verdana;font-size:15px;margin-top:12px;margin-bottom:5px;}
+			h2 {color:#606060;font-family:Helvetica;font-size:12.5px;font-weight:normal;margin-top:5px;margin-bottom:5px;margin-left:40px;}
+			div {color:black;font-family:Helvetica;font-size:13.5px;margin-top:15px;margin-bottom:5px;margin-left:40px;}
+			ul {list-style-type: none;}
+			a {color:black;}
+		</style>
+		<script>
+			
+			//Define phoneBookApp module and FilteringController which holds the 'records' data 
+			var phoneBookApp = angular.module('phoneBookApp', []);
+		    
+		    phoneBookApp.controller('FilteringController', function ($scope, $http){
+			    $http.get('phoneBook_json.txt').success(function(data) {
+			    	$scope.records = data;
+			    });
+		    });		    
+		    
+		    //Custom directive to allow entry in text boxes for specific patterns (e.g. only alphabets / spaces in Name search)
+		    phoneBookApp.directive('allowPattern', [allowPatternDirective]);
+
+		    function allowPatternDirective() {
+		        return {
+		            restrict: "A",
+		            compile: function(tElement, tAttrs) {
+		                return function(scope, element, attrs) {
+		            // I handle key events
+		                    element.bind("keypress", function(event) {
+		                        var keyCode = event.which || event.keyCode; // I safely get the keyCode pressed from the event.
+		                        var keyCodeChar = String.fromCharCode(keyCode); // I determine the char from the keyCode.
+
+		              // If the keyCode char does not match the allowed Regex Pattern, then don't allow the input into the field.
+		                        if (!keyCodeChar.match(new RegExp(attrs.allowPattern, "i"))) {
+		                event.preventDefault();
+		                            return false;
+		                        }
+
+		                    });
+		                };
+		            }
+		        };
+		    }
+		    
+		  	//Custom filter for name search in phone book records
+		    phoneBookApp.filter('searchFor', function(){
+		        return function(arr, searchString){
+		            if(!searchString){
+		                return arr;
+		            }		            
+		            var result = [];
+		            searchString = searchString.toLowerCase();
+		            angular.forEach(arr, function(item){
+		            	if( item.name.toLowerCase().indexOf(searchString) !== -1){
+		                	result.push(item);
+				        }		                
+		            });
+		            return result;
+		        };
+		    });
+			  	
+		
+		</script>			
+	</head>
+	<body>	
+		<h1>Phone Book Search</h1>
+		<h2>(Phone Book records read from a TEXT file containing records in JSON format)</h2>
+		<hr>
+		
+		<!-- Search by Name using AngularJS Custom filters -->
+		<div ng-controller="FilteringController">
+		    <br />
+		    <h3>Search by Name using AngularJS Custom filters.</h3>
+		
+		    Name:
+		    <input type="text" ng-model="regexNameSearch" ng-init="regexNameSearch=''" ng-trim="false" allow-pattern="\W|[a-z]" length="100" placeholder="Alphabets Only"/>
+		    <br />
+			<ul id="ajs_filter_name_custom" style="color:#606060;font-size:13px";">
+			    <li ng-if="regexNameSearch != ''" ng-repeat="record in records | searchFor:regexNameSearch | orderBy:'name'">{{ record.name }} - {{ record.phoneNumbers }}</li>
+			</ul>
+		</div>
+				
+
+				
+		<!-- Search by Name using AngularJS filters -->
+		<div ng-controller="FilteringController">
+		    <br />
+		    <h3>Search by Name using AngularJS filters.</h3>
+		
+		    Name:
+		    <input type="text" ng-model="nameSearch" ng-init="nameSearch=''" ng-trim="false" allow-pattern="\W|[a-z]" length="100" placeholder="Alphabets Only"/>
+			<ul id="ajs_filter_name" style="color:#606060;font-size:13px";">
+			    <li ng-if="nameSearch != ''" ng-repeat="record in records | filter:nameSearch | orderBy:'name'">{{ record.name }} - {{ record.phoneNumbers }}</li>
+			</ul>
+		</div>
+		
+		<!-- Search by Name / Phone Numbers using AngularJS filters -->
+		<div ng-controller="FilteringController">
+		    <br />
+		    <h3>Search by Name / Phone Numbers using AngularJS filters.</h3>
+		
+		    Name / Phone Number:
+		    <input type="text" ng-model="namePhoneSearch" ng-init="namePhoneSearch=''" ng-trim="false" placeholder="Alphabets / Numbers"/>
+		    <br />
+			<ul id="ajs_filter_name_phone" style="color:#606060;font-size:13px";">
+			    <li ng-if="namePhoneSearch != ''" ng-repeat="record in records | filter:namePhoneSearch | orderBy:'name'">{{ record.name }} - {{ record.phoneNumbers }}</li>
+			</ul>
+		</div>
+		
+		<!-- View / Hide All Phone Book Entries (For Verification) -->
+		<div ng-controller="FilteringController">
+		    <br />
+		    <h3>View / Hide All Phone Book Entries (For Verification).</h3>
+			
+			<a href ng-click="viewAllPhonebook = !viewAllPhonebook">View / Hide Phone Book Entries</a> (Toggle Link)		    
+		    <br />
+			<ul id="ajs_filter_name_custom" style="color:#606060;font-size:13px";" ng-show="viewAllPhonebook">
+			    <li ng-repeat="record in records | orderBy:'name'">{{ record.name }} - {{ record.phoneNumbers }}</li>
+			</ul>		    
+		</div>
+
+	</body>
+</html>
