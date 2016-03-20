@@ -1,0 +1,38 @@
+Phone Book Search Application Setup Instructions
+------------------------------------------------
+1. Download below files from GIT Repository:  https://github.com/manish-agr-in/PhoneBookSearch
+
+	PhoneBookSearch_1.0.war: WAR file that can be directly deployed to Tomcat 7.x
+	PhoneBookSearch_EclipseProject_1.0.zip - Eclipse Project as Zipped file
+	PhoneBookSearch_src_1.0.zip - Source files including Maven .pom file. It can be used to create a new project in IDEs like IntelliJ, NetBeans.
+
+	phoneBook_20.csv - 20 Phone Book Records. 
+	phoneBook_10K.csv - 10K Phone Book Records. 
+	phoneBook_100K.csv - 100K Phone Book Records. 
+
+	All 3 files intentionally contains duplicate names. Some records contain single phone number while others contain multiple.
+	
+2. Setup Eclipse Project
+	- Eclipse setup requires below software to be downloaded and installed:
+		1) JDK 1.7.x or higher, 64 bit version for Windows - http://bit.ly/1pDe83B (jdk-7u79-windows-x64.exe)
+		1) Eclipse Luna Java EE 64 bit version for Windows - http://bit.ly/1pDe4B4
+		2) Apache Tomcat 7.x 64 bit version for Windows - http://bit.ly/1pDeaZt (64-bit Windows zip OR 32-bit/64-bit Windows Service Installer)
+		3) Apache Maven 3.3, 64 bit version for Windows - http://bit.ly/1pDepDH (Binary zip archive)
+		4) Eclipse Luna Maven Plugin - Directly install from within Eclipse (<Help Menu > Install New Software > Add > Add Repository) from http://download.eclipse.org/technology/m2e/releases
+	- Unzip downloaded PhoneBookSearch_EclipseProject_1.0.zip in a local directory on Windows machine.
+	- Import the project into Eclipse from \PhoneBookSearch_EclipseProject_1.0.zip\PhoneBookSearch directory.
+	- Copy downloaded phoneBook_20.csv, phoneBook_10K.csv & phoneBook_100K.csv files to c:/PhoneBook folder.
+	- Set default workbench JDK to 1.7.79 from Eclipse: Window Menu > Preferences > Java > Installed JREs > Add > Standard VM > JDK 1.7.79 installation path
+	- Setup new Server Runtime for Tomcat 1.7.x from Eclipse: Window Menu > Preferences > Server > Server Runtime Environments Add > Apache Tomcat v7.0
+	- Select project PhoneBookSearch from Eclipse, right click, select Run As > Maven Build > Add Goals clean install
+	- Select project PhoneBookSearch from Eclipse, right click, select Run As > Run on Server
+	- Application will directly open in a browser with URL http://localhost:8080/PhoneBookSearch/
+		
+3. Deploy to Tomcat
+	- Rename downloaded PhoneBookSearch_1.0.war to PhoneBookSearch.war and directly deploy on Tomcat 7.x
+	- Access URL: http://localhost:8080/PhoneBookSearch/ (Port 8080 might need to be changed with any other port used for Tomcat)
+	
+4. View Source Code
+	- PhoneBookSearch_src_1.0.zip could be directly unzipped to view source Java, JSP and other Spring MVC files.
+	- Included Maven .pom file can be used to configure the source as a new project in IDEs like IntelliJ, NetBeans.
+	
